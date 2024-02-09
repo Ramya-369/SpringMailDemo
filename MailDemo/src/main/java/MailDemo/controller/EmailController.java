@@ -1,6 +1,7 @@
 package MailDemo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,5 +27,12 @@ public class EmailController {
 		return status;
 	}
 	
+	@Scheduled(cron = "0 55 11 * * ?")
+	@PostMapping("/sendScheduledEmailManually")
+	public String sendScheduledEmailManually() {
+	    emailSenderService.sendScheduledEmail();
+	    return "Scheduled email sent manually.";
+	}
+
 
 }

@@ -7,5 +7,7 @@ public interface EmailService {
 	String sendSimpleMail(EmailDetails details);
 	
 	String sendEmailWithAttachment(EmailDetails details);
+	
+	void sendScheduledEmail();
 
 }

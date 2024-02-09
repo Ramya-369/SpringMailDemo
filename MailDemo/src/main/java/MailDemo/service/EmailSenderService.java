@@ -1,13 +1,13 @@
 package MailDemo.service;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import MailDemo.entity.EmailDetails;
@@ -43,20 +43,40 @@ public class EmailSenderService implements EmailService {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            
+
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(details.getRecipient());
             mimeMessageHelper.setText(details.getMsgBody());
             mimeMessageHelper.setSubject(details.getSubject());
+            // Load the attachment file from the classpath
+            Resource resource = new ClassPathResource(details.getAttachment());
             
-            FileSystemResource fileSystem = new FileSystemResource(new File(details.getAttachment()));
-            mimeMessageHelper.addAttachment(fileSystem.getFilename(), fileSystem);
             
+            if (resource.exists()) {
+                // Add the attachment
+                mimeMessageHelper.addAttachment(resource.getFilename(), resource.getFile());
+            } else {
+                // Handle the case where the resource does not exist
+                System.out.println("Attachment file '" + details.getAttachment() + "' does not exist in the classpath.");
+                return "Error: Attachment file not found";
+            }
+
             mailSender.send(mimeMessage);
             return "Mail sent successfully...";
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "Error while sending email";
         }
     }
-}
+    
+   @Scheduled(cron="0 01 11 * * ?")  // Schedule task
+    public void sendScheduledEmail() {
+        EmailDetails details = new EmailDetails();
+        details.setRecipient("ramyamenda999@gmail.com");
+        details.setSubject("Scheduled Email");
+        details.setMsgBody("This is a scheduled email dummy.");
+        sendSimpleMail(details);
+    }
+
+
+} 
