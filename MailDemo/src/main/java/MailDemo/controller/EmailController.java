@@ -27,7 +27,7 @@ public class EmailController {
 		return status;
 	}
 	
-	@Scheduled(cron = "0 55 11 * * ?")
+	@Scheduled(cron = "0 30 11 * * ?")
 	@PostMapping("/sendScheduledEmailManually")
 	public String sendScheduledEmailManually() {
 	    emailSenderService.sendScheduledEmail();

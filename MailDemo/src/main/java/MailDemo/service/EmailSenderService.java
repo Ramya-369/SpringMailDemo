@@ -69,7 +69,7 @@ public class EmailSenderService implements EmailService {
         }
     }
     
-   @Scheduled(cron="0 01 11 * * ?")  // Schedule task
+
     public void sendScheduledEmail() {
         EmailDetails details = new EmailDetails();
         details.setRecipient("ramyamenda999@gmail.com");
